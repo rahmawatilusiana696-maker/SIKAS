@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIKAS PIXEL - KERAJAAN EDITION 👑</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Press Start 2P', cursive; 
+            background-color: #2D1B4E; 
+            background-image: radial-gradient(#4b2d8a 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #fff;
+            image-rendering: pixelated;
+        }
+        .pixel-border { border: 4px solid #fff; box-shadow: 6px 6px 0px #000; }
+        .pixel-btn {
+            position: relative;
+            display: inline-block;
+            padding: 10px 15px;
+            border: 4px solid #000;
+            box-shadow: 4px 4px 0px #ff00ff;
+            transition: all 0.1s;
+            text-align: center;
+        }
+        .pixel-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px #ff00ff; }
+        .pixel-card { background: #1a1a1a; border: 4px solid #fff; box-shadow: 8px 8px 0px #5ecfff; }
+        input { font-family: 'Press Start 2P', cursive; font-size: 10px; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: #ff00ff; border: 2px solid #fff; }
+        
+        .notif-badge { animation: pulse 1s infinite; }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); color: yellow; }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="p-4">
+
+    <div id="landing" class="min-h-screen flex flex-col items-center justify-center text-center">
+        <div class="mb-6 animate-bounce text-yellow-400 text-7xl"><i class="fas fa-coins"></i></div>
+        <h1 class="text-2xl mb-4 text-pink-500" style="text-shadow: 4px 4px #000;">SIKAS PIXEL</h1>
+        <p class="text-[8px] mb-8 text-sky-400 leading-relaxed">DATABASE 36 WARGA TERPASANG...<br>SIAP SETOR UPETI?</p>
+        <button onclick="document.getElementById('modal-login').classList.remove('hidden')" class="pixel-btn bg-green-500 text-white text-[10px]">
+            START MISSION! 🚀
+        </button>
+    </div>
+
+    <div id="modal-login" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-4 z-50">
+        <div class="pixel-card p-6 w-full max-w-sm">
+            <h2 class="text-[10px] text-yellow-400 mb-6 text-center italic">SIAPA KAMU? <br> MASUKKAN ID & NAMA 🔍</h2>
+            <input type="text" id="log-nama" placeholder="NAMA LENGKAP" class="w-full bg-slate-800 p-4 mb-4 border-2 border-white text-white uppercase outline-none focus:border-pink-500">
+            <input type="password" id="log-id" placeholder="ID (CONTOH: 01)" class="w-full bg-slate-800 p-4 mb-6 border-2 border-white text-white outline-none focus:border-pink-500 text-center uppercase">
+            <button onclick="handleLogin()" class="w-full pixel-btn bg-pink-500 py-3 text-[10px]">LOG IN!</button>
+        </div>
+    </div>
+
+    <div id="app" class="hidden max-w-md mx-auto">
+        <div class="flex justify-between items-center mb-6 bg-black/50 p-4 pixel-border">
+            <div class="text-[8px] text-pink-400">SIKAS v.8BIT</div>
+            <button onclick="location.reload()" class="bg-red-600 text-[8px] p-2 border-2 border-white">EXIT</button>
+        </div>
+
+        <div class="pixel-card p-4 mb-6 flex items-center gap-4 border-yellow-400">
+            <div id="u-avatar" class="text-3xl">👾</div>
+            <div>
+                <div id="user-nm" class="text-[10px] text-white">---</div>
+                <div id="user-rl" class="text-[7px] text-sky-400 mt-2">WARGA KERAJAAN</div>
+            </div>
+        </div>
+
+        <div id="v-siswa" class="hidden">
+            <div class="pixel-card p-6 bg-indigo-900 border-sky-400 text-center">
+                <p class="text-[8px] mb-4">DOSA KAS-MU: 💸</p>
+                <h2 id="u-bill" class="text-xl text-yellow-400 mb-6">Rp 0</h2>
+                
+                <div id="status-box" class="hidden mb-6 p-3 text-[7px] border-4 animate-pulse"></div>
+                <div id="s-wait" class="hidden mb-6 p-3 bg-white/10 border-2 border-dashed border-white animate-pulse text-[8px] text-pink-300">DI-SCAN MUTIA... ⌛</div>
+                
+                <div id="u-area">
+                    <div class="grid grid-cols-2 gap-2 mb-4">
+                        <button onclick="setMethod('CASH')" id="btn-cash" class="pixel-btn bg-slate-700 text-[7px]">CASH 💵</button>
+                        <button onclick="setMethod('TRANSFER')" id="btn-tf" class="pixel-btn bg-slate-700 text-[7px]">TRANSFER 📱</button>
+                    </div>
+
+                    <div id="bank-info" class="hidden p-3 bg-blue-900/50 border-2 border-blue-400 text-[7px] mb-4 text-left">
+                        <p class="text-blue-300 mb-1 italic">TRANSFER KE REK BSI:</p>
+                        <p class="text-white font-bold text-[10px] mb-1">7280703208</p>
+                        <p class="text-[6px] text-blue-200">a.n MUTIA MEILANI PUTRI</p>
+                    </div>
+
+                    <label id="upload-label" class="hidden pixel-btn bg-sky-500 w-full cursor-pointer">
+                        <span id="label-text" class="text-[8px]">SETOR BUKTI! 📸</span>
+                        <input type="file" class="hidden" onchange="uploadPixel(event)">
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div id="v-admin" class="hidden space-y-4">
+            <div class="flex gap-2">
+                <button onclick="tab('list')" id="t-list" class="flex-1 pixel-btn bg-white text-black text-[8px] py-3">WARGA</button>
+                <button onclick="tab('req')" id="t-req" class="flex-1 pixel-btn bg-pink-500 text-white text-[8px] py-3">
+                    LAPORAN (<span id="notif" class="notif-badge">0</span>)
+                </button>
+            </div>
+            <div id="pane-list" class="space-y-3 h-[400px] overflow-y-auto pr-2"></div>
+            <div id="pane-req" class="hidden space-y-6"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATABASE WARGA & TAGIHAN ---
+        const db = [
+            {id:"01", name:"ADITYA RAKA MAULANA", bill:60}, {id:"02", name:"AGNES PRABANDARI", bill:50},
+            {id:"03", name:"AKHTAR MUHAMMAD HANAN", bill:60}, {id:"04", name:"ALBANY RIDHO IBANESTA", bill:60},
+            {id:"05", name:"ALYA RAISSA SYAHLANI", bill:125}, {id:"06", name:"ANASTASIA BUNGA PRATIWI", bill:100},
+            {id:"07", name:"APRILA ZARA DEVI", bill:60}, {id:"08", name:"ARIFA CITA HARDANTI", bill:60},
+            {id:"09", name:"CHAYLA SYLANITA ARUM PUTRI", bill:95}, {id:"10", name:"CINTA PUTRI ARNEETA", bill:70},
+            {id:"11", name:"DANDRE NABIEL REVANDITO", bill:30}, {id:"12", name:"FARAH AVRILLIA NATASYA", bill:60},
+            {id:"13", name:"FIMELLIANY DENOXA", bill:60}, {id:"14", name:"HABIBAH AZZAHRA", bill:80},
+            {id:"15", name:"INDAH MEILANI", bill:75}, {id:"16", name:"KAISYA AZZAHRA MAHARANI", bill:40},
+            {id:"17", name:"KANIA MAHESWARI", bill:35}, {id:"18", name:"KEYLA AIDA BENING MAHARANI", bill:100},
+            {id:"19", name:"KEYZA NABAWY", bill:60}, {id:"20", name:"LAYINATUS SIFA", bill:50},
+            {id:"21", name:"LUSIANA RAHMAWATI", bill:0}, {id:"22", name:"MUHAMMAD FEBRI WAHYUDI", bill:85},
+            {id:"23", name:"MUHAMMAD DESTA NOVIANTO", bill:50}, {id:"24", name:"MUHAMMAD VINO MARLIYANTO", bill:60},
+            {id:"25", name:"MUTIA MEILANI PUTRI", bill:0}, {id:"26", name:"NADINE KIRANIA", bill:60},
+            {id:"27", name:"NAJWA RAYSA NOFID", bill:60}, {id:"28", name:"NAZWA RIZKIA AULIANI", bill:55},
+            {id:"29", name:"OKTA NADIA SAFITRI", bill:60}, {id:"30", name:"RASSYA HERDA PRASETYA", bill:60},
+            {id:"31", name:"SHAFIRA KUSUMA DEWI", bill:30}, {id:"32", name:"VANIA JEVERA NIRWASITA DESMONDA", bill:0},
+            {id:"33", name:"WISNU NUGROHO", bill:120}, {id:"34", name:"ZAHRA AWALLIYA ARIFIN", bill:50},
+            {id:"35", name:"ZAHRA NAYLUNA AHMAD", bill:100}, {id:"36", name:"ZULKARNAIN SATRIA PAMUNGKAS", bill:60}
+        ];
+        
+        let me = null;
+        let selectedMethod = '';
+        let queue = JSON.parse(localStorage.getItem('pixel_queue') || "[]");
+
+        function handleLogin() {
+            const n = document.getElementById('log-nama').value.toUpperCase().trim();
+            const i = document.getElementById('log-id').value.trim();
+            const found = db.find(s => s.name === n && (s.id === i || s.id === "0"+i));
+            
+            if(found) {
+                me = found;
+                document.getElementById('landing').classList.add('hidden');
+                document.getElementById('modal-login').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+                renderHome();
+                if(me.id === "25") setInterval(checkNewRequest, 3000); 
+            } else {
+                Swal.fire({title:'DATA SALAH!', text:'Cek ID atau Nama lagi!', icon:'error', background:'#1a1a1a', color:'#fff'});
+            }
+        }
+
+        function renderHome() {
+            document.getElementById('user-nm').innerText = me.name;
+            if(me.id === "25") {
+                document.getElementById('v-admin').classList.remove('hidden');
+                document.getElementById('u-avatar').innerText = "👑";
+                document.getElementById('user-rl').innerText = "BOSS BENDAHARA";
+                tab('list');
+            } else {
+                document.getElementById('v-siswa').classList.remove('hidden');
+                updateSiswa();
+            }
+        }
+
+        function setMethod(m) {
+            selectedMethod = m;
+            document.getElementById('bank-info').classList.toggle('hidden', m !== 'TRANSFER');
+            document.getElementById('upload-label').classList.remove('hidden');
+            
+            document.getElementById('btn-cash').style.background = m === 'CASH' ? '#16a34a' : '#334155';
+            document.getElementById('btn-tf').style.background = m === 'TRANSFER' ? '#16a34a' : '#334155';
+            document.getElementById('label-text').innerText = m === 'CASH' ? 'FOTO BUKTI CASH 📸' : 'UPLOAD BUKTI TF 📱';
+        }
+
+        function updateSiswa() {
+            const currentQueue = JSON.parse(localStorage.getItem('pixel_queue') || "[]");
+            const history = JSON.parse(localStorage.getItem('pixel_history') || "[]");
+            const isWait = currentQueue.some(q => q.id === me.id);
+            const myStatus = history.filter(h => h.userId === me.id).pop();
+
+            document.getElementById('u-bill').innerText = me.bill > 0 ? `Rp ${me.bill}k` : 'LUNAS! 🔥';
+            document.getElementById('s-wait').classList.toggle('hidden', !isWait);
+            document.getElementById('u-area').classList.toggle('hidden', isWait || me.bill === 0);
+
+            const statusBox = document.getElementById('status-box');
+            if (myStatus && !isWait) {
+                statusBox.classList.remove('hidden');
+                if (myStatus.type === 'SUCCESS') {
+                    statusBox.innerHTML = `INFO: DITERIMA! ✅<br><span style="font-size:6px">${myStatus.time}</span>`;
+                    statusBox.className = "mb-6 p-3 text-[7px] border-4 border-green-500 bg-green-900/20 text-green-400";
+                } else {
+                    statusBox.innerHTML = `INFO: DITOLAK! ❌<br>MUNGKIN BUKTI PALSU!<br><span style="font-size:6px">${myStatus.time}</span>`;
+                    statusBox.className = "mb-6 p-3 text-[7px] border-4 border-red-500 bg-red-900/20 text-red-400";
+                }
+            }
+        }
+
+        function uploadPixel(e) {
+            const file = e.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = (r) => {
+                    const newReq = { 
+                        id: me.id, 
+                        name: me.name, 
+                        amount: me.bill, 
+                        img: r.target.result,
+                        method: selectedMethod 
+                    };
+                    let currentQueue = JSON.parse(localStorage.getItem('pixel_queue') || "[]");
+                    currentQueue.push(newReq);
+                    localStorage.setItem('pixel_queue', JSON.stringify(currentQueue));
+                    
+                    Swal.fire({
+                        title:'TERKIRIM!', 
+                        text:'Mutia bakal segera cek!', 
+                        icon:'success', background:'#1a1a1a', color:'#fff'
+                    });
+                    updateSiswa();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // --- ADMIN FUNCTIONS ---
+        function confirm(id, ok) {
+            let currentQueue = JSON.parse(localStorage.getItem('pixel_queue') || "[]");
+            let history = JSON.parse(localStorage.getItem('pixel_history') || "[]");
+            const qIdx = currentQueue.findIndex(q => q.id === id);
+            const timestamp = new Date().toLocaleTimeString();
+
+            if(ok) {
+                const s = db.find(s => s.id === id);
+                if(s) s.bill = 0;
+                history.push({ userId: id, type: 'SUCCESS', time: timestamp });
+            } else {
+                history.push({ userId: id, type: 'FAILED', time: timestamp });
+            }
+            
+            localStorage.setItem('pixel_history', JSON.stringify(history));
+            currentQueue.splice(qIdx, 1);
+            localStorage.setItem('pixel_queue', JSON.stringify(currentQueue));
+            queue = currentQueue;
+            renderReq();
+            renderList();
+        }
+
+        function checkNewRequest() {
+            const currentQueue = JSON.parse(localStorage.getItem('pixel_queue') || "[]");
+            if (currentQueue.length > queue.length) {
+                const toast = Swal.mixin({
+                    toast: true, position: 'top-end', showConfirmButton: false, timer: 3000,
+                    background: '#ff00ff', color: '#fff'
+                });
+                toast.fire({ icon: 'warning', title: '🚨 ADA SETORAN!' });
+                queue = currentQueue;
+                document.getElementById('notif').innerText = queue.length;
+                if(!document.getElementById('pane-req').classList.contains('hidden')) renderReq();
+            }
+        }
+
+        function tab(t) {
+            document.getElementById('pane-list').classList.toggle('hidden', t !== 'list');
+            document.getElementById('pane-req').classList.toggle('hidden', t !== 'req');
+            document.getElementById('t-list').style.background = t === 'list' ? '#fff' : '#1a1a1a';
+            document.getElementById('t-list').style.color = t === 'list' ? '#000' : '#fff';
+            if(t === 'list') renderList();
+            if(t === 'req') renderReq();
+        }
+
+        function renderList() {
+            const container = document.getElementById('pane-list');
+            container.innerHTML = db.map(s => `
+                <div class="pixel-card p-3 flex justify-between items-center text-[7px] border-slate-700">
+                    <div>
+                        <div class="mb-1">${s.name}</div>
+                        <div class="text-sky-400">ID:${s.id}</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="${s.bill > 0 ? 'text-pink-500' : 'text-green-400'}">${s.bill > 0 ? s.bill+'k' : 'LUNAS'}</span>
+                        <button onclick="editHutang('${s.id}')" class="bg-yellow-600 p-1 border-2 border-white"><i class="fas fa-pen"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderReq() {
+            const container = document.getElementById('pane-req');
+            const currentQueue = JSON.parse(localStorage.getItem('pixel_queue') || "[]");
+            document.getElementById('notif').innerText = currentQueue.length;
+            if(currentQueue.length === 0) {
+                container.innerHTML = '<div class="text-center text-[8px] py-10 opacity-40 italic">ANTRIAN BERSIH...</div>';
+                return;
+            }
+            container.innerHTML = currentQueue.map(q => `
+                <div class="pixel-card p-4 border-yellow-500">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="text-[8px] text-pink-400">${q.name}</div>
+                        <div class="bg-white text-black text-[6px] px-1">${q.method || '??'}</div>
+                    </div>
+                    <img src="${q.img}" class="w-full h-40 object-cover border-2 border-white mb-4">
+                    <div class="flex gap-2">
+                        <button onclick="confirm('${q.id}', true)" class="flex-1 pixel-btn bg-green-500 text-[7px]">TERIMA</button>
+                        <button onclick="confirm('${q.id}', false)" class="flex-1 pixel-btn bg-red-600 text-[7px]">TOLAK</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function editHutang(id) {
+            const s = db.find(x => x.id === id);
+            Swal.fire({
+                title: 'EDIT TAGIHAN',
+                input: 'number',
+                background: '#1a1a1a', color: '#fff',
+                confirmButtonColor: '#ff00ff'
+            }).then(r => { if(r.value) { s.bill = parseInt(r.value); renderList(); } });
+        }
+    </script>
+</body>
+</html>
